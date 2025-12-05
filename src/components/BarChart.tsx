@@ -1,42 +1,32 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function BarChart() {
-    const [data, setData] = useState<{ name: string; value: number }[]>([]);
+interface BarChartProps {
+    levelDistribution: {
+        Beginner: number;
+        Intermediate: number;
+        Advanced: number;
+    };
+}
 
-    useEffect(() => {
-        const history = JSON.parse(localStorage.getItem('wordHistory') || '[]');
-        const distribution = {
-            Beginner: 0,
-            Intermediate: 0,
-            Advanced: 0,
-        };
-
-        history.forEach((item: any) => {
-            if (distribution[item.difficulty] !== undefined) {
-                distribution[item.difficulty]++;
-            }
-        });
-
-        setData([
-            { name: 'Beginner', value: distribution.Beginner },
-            { name: 'Intermediate', value: distribution.Intermediate },
-            { name: 'Advanced', value: distribution.Advanced },
-        ]);
-    }, []);
+export default function BarChart({ levelDistribution }: BarChartProps) {
+    const data = [
+        { name: 'Beginner', practices: levelDistribution.Beginner },
+        { name: 'Intermediate', practices: levelDistribution.Intermediate },
+        { name: 'Advanced', practices: levelDistribution.Advanced },
+    ];
 
     return (
-        <div className="h-64 bg-gray-50 p-4 rounded-lg flex justify-around items-end border border-gray-200">
-            {data.map((item) => (
-                <div key={item.name} className="flex flex-col items-center h-full justify-end">
-                    <div
-                        className="w-12 bg-info rounded-t-lg shadow-md transform hover:scale-105 transition-transform duration-200 ease-in-out"
-                        style={{ height: `${(item.value / (Math.max(...data.map(d => d.value)) || 1)) * 90}%` }} // 90% to leave space for label
-                    ></div>
-                    <span className="text-sm mt-2 text-gray-600 font-medium">{item.name} ({item.value})</span>
-                </div>
-            ))}
-        </div>
+        <ResponsiveContainer width="100%" height={300}>
+            <RechartsBarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="practices" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+            </RechartsBarChart>
+        </ResponsiveContainer>
     );
 }

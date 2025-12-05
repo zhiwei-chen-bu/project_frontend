@@ -17,7 +17,8 @@ module.exports = {
         info: '#3B82F6', // Blue 500
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['var(--font-inter)', 'sans-serif'],
+        serif: ['var(--font-serif)', 'serif'],
       },
     },
   },

@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { HistoryItem } from '@/types';
 
-export default function RecentHistory() {
-    const [history, setHistory] = useState<any[]>([]);
+interface RecentHistoryProps {
+    history: HistoryItem[];
+}
 
-    useEffect(() => {
-        const storedHistory = JSON.parse(localStorage.getItem('wordHistory') || '[]');
-        setHistory(storedHistory.slice(-5).reverse());
-    }, []);
-
+export default function RecentHistory({ history }: RecentHistoryProps) {
     return (
         <div className="space-y-4">
             {history.length > 0 ? (
-                history.map((item, index) => (
-                    <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 ease-in-out">
+                history.map((item) => (
+                    <div key={item.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 ease-in-out">
                         <div className="flex justify-between items-center mb-1">
                             <p className="font-semibold text-lg text-gray-800">{item.word}</p>
-                            <p className={`font-bold text-xl ${item.score >= 8 ? 'text-success' : item.score >= 6 ? 'text-warning' : 'text-danger'}`}>
+                            <p className={`font-bold text-xl ${
+                                item.score >= 8 ? 'text-green-600' : 
+                                item.score >= 6 ? 'text-yellow-600' : 
+                                'text-red-600'
+                            }`}>
                                 {item.score.toFixed(1)}
                             </p>
                         </div>
-                        <p className="text-sm text-gray-600 italic">"{item.sentence}"</p>
-                        <p className="text-xs text-gray-400 mt-2">{new Date(item.timestamp).toLocaleString()}</p>
+                        <p className="text-sm text-gray-600 italic mb-2">"{item.user_sentence}"</p>
+                        <p className="text-xs text-gray-500">{item.feedback}</p>
+                        <p className="text-xs text-gray-400 mt-2">{new Date(item.practiced_at).toLocaleString()}</p>
                     </div>
                 ))
             ) : (
